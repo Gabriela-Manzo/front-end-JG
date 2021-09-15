@@ -1,10 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import GlobalStyle from './assets/globalStyle';
+import "animate.css"
+import CssBaseline from '@material-ui/core/CssBaseline';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <>
+    <CssBaseline />
+    <GlobalStyle />
     <App />
   </>,
   document.getElementById('root')

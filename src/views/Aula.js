@@ -6,21 +6,25 @@ import immer from 'immer'
 
 
 const initialMessagesState = {
-  aula: [],
-  exercicios: [],
-  duvidas: [],
+  Aula: [],
+  Exercicios: [],
 };
 
 function Aula() {
   const [username, setUsername] = useState("");
   const [connected, setConnected] = useState(false);
-  const [currentChat, setCurrentChat] = useState({ isChannel: true, chatName: "aula", receiverId: "" });
-  const [connectedRooms, setConnectedRooms] = useState(["aula"]);
+  const [currentChat, setCurrentChat] = useState({ isChannel: true, chatName: "Aula", receiverId: "" });
+  const [connectedRooms, setConnectedRooms] = useState(["Aula"]);
   const [allUsers, setAllUsers] = useState([]);
   const [messages, setMessages] = useState(initialMessagesState);
   const [message, setMessage] = useState("");
   const socketRef = useRef();
   
+  console.log( '%%%', allUsers);
+ 
+  const teacherOnline = allUsers.filter((item) => item.username === "Professor(a)")
+
+  console.log( '@@@', teacherOnline);
 
   function handleMessageChange(e) {
     setMessage(e.target.value)
@@ -82,7 +86,10 @@ function Aula() {
     setConnected(true);
     socketRef.current = io("http://localhost:3333");
     socketRef.current.emit("join.server", username);
-    socketRef.current.emit("join.room", "aula", (messages) => roomJoinCallback(messages, "aula"));
+    socketRef.current.on("message", (greeting) => {
+      console.log(greeting);
+    })
+    socketRef.current.emit("join.room", "Exercicios", (messages) => roomJoinCallback(messages, "Exercicios"));
     socketRef.current.on("new.user", allUsers => {
       setAllUsers(allUsers);
     });
@@ -101,6 +108,7 @@ function Aula() {
   }
 
   let body;
+  
   if (connected) {
     body = (
       <Chat
@@ -108,6 +116,7 @@ function Aula() {
         handleMessageChange={handleMessageChange}
         sendMessage={sendMessage}
         yourId={socketRef.current ? socketRef.current.id: ""}
+        teacher={teacherOnline}
         allUsers={allUsers}
         joinRoom={joinRoom}
         connectedRooms={connectedRooms}
@@ -118,11 +127,11 @@ function Aula() {
     )
   } else {
     body = (
-      <Form 
-        username={username}
-        onChange={handleChange}
-        connect={connect} 
-      />
+        <Form 
+          username={username}
+          onChange={handleChange}
+          connect={connect} 
+        />
     )
   }
 
